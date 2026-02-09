@@ -436,6 +436,9 @@ class ForaTaskAPITester:
         response = self.make_request('POST', 'payment/create-order', data=payment_data, auth_token=self.user_token)
         
         if not response:
+            # Try to debug the issue
+            print(f"Debug: User token exists: {bool(self.user_token)}")
+            print(f"Debug: Token preview: {self.user_token[:20] if self.user_token else 'None'}...")
             self.log_test("Payment Creation 503", False, error_msg="Request failed")
             return False
         
@@ -447,6 +450,11 @@ class ForaTaskAPITester:
             else:
                 self.log_test("Payment Creation 503", False, data, "Unexpected 503 message")
                 return False
+        elif response.status_code == 401:
+            # Authentication issue - this is expected if token is invalid
+            self.log_test("Payment Creation 503", False, response.json() if response.content else None,
+                         f"Authentication failed - token may be invalid")
+            return False
         else:
             self.log_test("Payment Creation 503", False, response.json() if response.content else None,
                          f"Expected 503, got {response.status_code}")
