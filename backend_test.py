@@ -498,6 +498,10 @@ class ForaTaskAPITester:
             # This is acceptable for a non-existent task
             self.log_test("Task Completion History", True, "Endpoint working (404 for non-existent task)")
             return True
+        elif response.status_code == 401:
+            self.log_test("Task Completion History", False, response.json() if response.content else None,
+                         "Authentication failed - check token validity")
+            return False
         else:
             self.log_test("Task Completion History", False, response.json() if response.content else None,
                          f"Unexpected status code: {response.status_code}")
