@@ -482,6 +482,16 @@ const markAsCompleted = async (req, res) => {
                         type: "taskApproval"
                     });
                 }
+                
+                // Save completion history for recurring tasks
+                if (task.taskType === 'Recurring') {
+                    try {
+                        await TaskCompletionHistory.createFromTask(task, userId, 'Completed');
+                    } catch (historyError) {
+                        console.error('Failed to save completion history:', historyError.message);
+                    }
+                }
+                
                 task.status = "Completed";
                 await task.save();
                 updatedTasks.push(task);
