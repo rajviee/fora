@@ -467,6 +467,42 @@ class ForaTaskAPITester:
                          f"Expected 503, got {response.status_code}")
             return False
 
+    def test_task_completion_history(self):
+        """Test GET /task/:id/history - Get recurring task completion history"""
+        print("\n🔍 Testing Task Completion History...")
+        
+        if not self.user_token:
+            self.log_test("Task Completion History", False, error_msg="No user token")
+            return False
+        
+        # Use a dummy task ID since we don't have tasks created in this test
+        # This will test the endpoint structure and authentication
+        dummy_task_id = "507f1f77bcf86cd799439011"  # Valid ObjectId format
+        
+        response = self.make_request('GET', f'task/{dummy_task_id}/history', auth_token=self.user_token)
+        
+        if not response:
+            self.log_test("Task Completion History", False, error_msg="Request failed")
+            return False
+        
+        # We expect either 200 with empty array or 404 for non-existent task
+        if response.status_code == 200:
+            data = response.json()
+            if isinstance(data, list):
+                self.log_test("Task Completion History", True, f"History endpoint working, returned {len(data)} records")
+                return True
+            else:
+                self.log_test("Task Completion History", False, data, "Response is not an array")
+                return False
+        elif response.status_code == 404:
+            # This is acceptable for a non-existent task
+            self.log_test("Task Completion History", True, "Endpoint working (404 for non-existent task)")
+            return True
+        else:
+            self.log_test("Task Completion History", False, response.json() if response.content else None,
+                         f"Unexpected status code: {response.status_code}")
+            return False
+
     def run_all_tests(self):
         """Run all tests in sequence"""
         print("🚀 Starting ForaTask Backend API Tests...")
