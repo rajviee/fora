@@ -87,6 +87,44 @@ io.on("connection", (socket) => {
     console.log("Registered:", userId, "->", socket.id);
   });
 
+  // Chat: Join room
+  socket.on("joinChatRoom", (roomId) => {
+    socket.join(`chat_${roomId}`);
+    console.log(`User joined chat room: ${roomId}`);
+  });
+
+  // Chat: Leave room
+  socket.on("leaveChatRoom", (roomId) => {
+    socket.leave(`chat_${roomId}`);
+    console.log(`User left chat room: ${roomId}`);
+  });
+
+  // Chat: Send message (real-time)
+  socket.on("sendChatMessage", async (data) => {
+    const { roomId, message, userId } = data;
+    try {
+      // Broadcast to room
+      socket.to(`chat_${roomId}`).emit("newChatMessage", {
+        roomId,
+        message,
+        userId
+      });
+    } catch (error) {
+      console.error("Chat message error:", error);
+    }
+  });
+
+  // Chat: Typing indicator
+  socket.on("typing", (data) => {
+    const { roomId, userId, userName } = data;
+    socket.to(`chat_${roomId}`).emit("userTyping", { roomId, userId, userName });
+  });
+
+  socket.on("stopTyping", (data) => {
+    const { roomId, userId } = data;
+    socket.to(`chat_${roomId}`).emit("userStoppedTyping", { roomId, userId });
+  });
+
   // Remove user on disconnect
   socket.on("disconnect", () => {
     console.log("Socket disconnected:", socket.id);
