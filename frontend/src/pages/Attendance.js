@@ -20,7 +20,7 @@ export default function Attendance() {
         api.get('/attendance/history'),
       ]);
       setTodayStatus(statusRes.data);
-      setHistory(historyRes.data?.records || []);
+      setHistory(historyRes.data?.records || historyRes.data?.attendance || []);
       setStats(historyRes.data?.stats || null);
     } catch (e) { console.error(e); }
     setLoading(false);
