@@ -49,7 +49,7 @@ export default function Chat() {
 
   const loadUsers = async () => {
     try {
-      const res = await api.get('/me/users');
+      const res = await api.get('/me/usersList');
       setUsers(res.data?.users || res.data || []);
     } catch (e) { console.error(e); }
   };
@@ -60,7 +60,7 @@ export default function Chat() {
       const res = await api.get(`/chat/rooms/${room._id}/messages`);
       setMessages(res.data?.messages || []);
       socketRef.current?.emit('joinChatRoom', room._id);
-      await api.patch(`/chat/rooms/${room._id}/read`).catch(() => {});
+      await api.post(`/chat/rooms/${room._id}/read`).catch(() => {});
     } catch (e) { console.error(e); }
   };
 
@@ -77,7 +77,7 @@ export default function Chat() {
     e.preventDefault();
     if (!newMessage.trim() || !activeRoom) return;
     try {
-      const res = await api.post('/chat/messages', { roomId: activeRoom._id, content: newMessage });
+      const res = await api.post('/chat/rooms/' + activeRoom._id + '/messages', { roomId: activeRoom._id, content: newMessage });
       setMessages(prev => [...prev, res.data?.message]);
       socketRef.current?.emit('sendChatMessage', { roomId: activeRoom._id, message: res.data?.message, userId: user?.id });
       setNewMessage('');

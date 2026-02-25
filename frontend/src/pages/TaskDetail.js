@@ -39,7 +39,7 @@ export default function TaskDetail() {
 
   const handleStatusChange = async (status) => {
     try {
-      await api.patch(`/task/${id}`, { status });
+      await api.patch(`/task/edit/${id}`, { status });
       loadTask();
     } catch (e) {
       alert(e.response?.data?.message || 'Failed to update status');
@@ -48,7 +48,7 @@ export default function TaskDetail() {
 
   const handleMarkComplete = async () => {
     try {
-      await api.patch('/task/complete', { taskIds: [id] });
+      await api.patch('/task/markAsCompleted', { taskIds: [id] });
       loadTask();
     } catch (e) {
       alert(e.response?.data?.message || 'Failed');
