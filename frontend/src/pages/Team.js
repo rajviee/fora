@@ -15,7 +15,7 @@ export default function Team() {
 
   const loadUsers = async () => {
     try {
-      const res = await api.get('/me/users');
+      const res = await api.get('/me/usersList');
       setUsers(res.data?.users || res.data || []);
     } catch (e) { console.error(e); }
     setLoading(false);
@@ -26,7 +26,7 @@ export default function Team() {
     setError('');
     setAddLoading(true);
     try {
-      await api.post('/add-user', form);
+      await api.post('/add-employee', form);
       setShowAdd(false);
       setForm({ firstName: '', lastName: '', email: '', password: '', role: 'employee', designation: '' });
       loadUsers();
