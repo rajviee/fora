@@ -15,12 +15,19 @@ export default function Team() {
 
   const loadUsers = async () => {
     try {
-      let res;
       if (user?.role === 'admin') {
-        res = await api.get('/emp-list?perPage=50');
-        setUsers(res.data?.employees || []);
+        const [empRes, infoRes] = await Promise.all([
+          api.get('/emp-list?perPage=50'),
+          api.get('/me/userinfo'),
+        ]);
+        const employees = empRes.data?.employees || [];
+        const admin = infoRes.data;
+        if (admin && !employees.some(e => e._id === admin._id)) {
+          employees.unshift(admin);
+        }
+        setUsers(employees);
       } else {
-        res = await api.get('/me/usersList');
+        const res = await api.get('/me/usersList');
         setUsers(res.data || []);
       }
     } catch (e) { console.error(e); }
