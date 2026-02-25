@@ -148,7 +148,8 @@ const getMessages = async (req, res) => {
 // Send message
 const sendMessage = async (req, res) => {
     try {
-        const { roomId, content, messageType = 'text', mentions = [], replyTo = null } = req.body;
+        const roomId = req.params.roomId || req.body.roomId;
+        const { content, messageType = 'text', mentions = [], replyTo = null } = req.body;
         const userId = req.user.id;
         const companyId = req.user.company;
 
