@@ -42,8 +42,8 @@ dotenv.config();
 const io = new Server(server, {
   path: "/socket.io",
   cors: {
-    origin: process.env.FRONTEND_URI,
-    methods: ["GET", "POST","PATCH"],
+    origin: "*",
+    methods: ["GET", "POST","PATCH","PUT","DELETE"],
     credentials: true,
   },
 });
