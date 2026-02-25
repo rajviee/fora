@@ -146,9 +146,8 @@ const addComment = async (req, res) => {
 
         const notifications = [...notifyUsers].map(notifyUserId => ({
             userId: notifyUserId,
-            senderId: userId,
             taskId,
-            type: mentions.includes(notifyUserId) ? 'mention' : 'comment',
+            type: 'system',
             message: `${author.firstName} ${author.lastName} ${mentions.includes(notifyUserId) ? 'mentioned you' : 'commented'} on task "${task.title}"`,
             company: companyId
         }));
