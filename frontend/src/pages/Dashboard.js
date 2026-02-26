@@ -35,8 +35,18 @@ const Dashboard = () => {
         api.get('/attendance/today')
       ]);
       
-      setStats(statsRes.data);
-      setTodaysTasks(tasksRes.data?.tasks || []);
+      // Map the stats response to our expected format
+      const rawStats = statsRes.data || {};
+      setStats({
+        totalTasks: rawStats.allTimeTotalTasks || 0,
+        pending: rawStats.todaylowPriority + rawStats.todaymediumPriority + rawStats.todayhighPriority || 0,
+        inProgress: 0,
+        completed: rawStats.allTimeCompletedTasks || 0,
+        overdue: rawStats.allTimeOverdueTasks || rawStats.todayoverduePriority || 0
+      });
+      
+      const tasksData = tasksRes.data?.tasks || tasksRes.data || [];
+      setTodaysTasks(Array.isArray(tasksData) ? tasksData : []);
       setTodayAttendance(attendanceRes.data);
     } catch (err) {
       console.error('Failed to fetch dashboard data:', err);
