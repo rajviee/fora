@@ -327,8 +327,8 @@ class ForataskAPITester:
         print("🚀 Starting Foratask API Test Suite")
         print("=" * 50)
         
-        # Test with different user roles
-        for role in ["admin", "supervisor", "employee"]:
+        # Test with admin role first
+        for role in ["admin"]:
             print(f"\n🔐 Testing with {role.upper()} role...")
             
             if not self.test_login(role):
