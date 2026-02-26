@@ -255,10 +255,6 @@ class ForataskAPITester:
 
     def test_admin_apis(self):
         """Test admin-specific endpoints"""
-        if self.user.get('role') != 'admin':
-            print("\n⚠️ Skipping admin tests - not logged in as admin")
-            return True
-            
         print("\n👑 Testing Admin APIs...")
         
         # Test organization settings
@@ -266,6 +262,14 @@ class ForataskAPITester:
             "Get organization settings",
             "GET",
             "/organization-settings",
+            200
+        )
+        
+        # Test admin employees endpoint
+        self.run_test(
+            "Get employees (admin)",
+            "GET",
+            "/employees",
             200
         )
         
