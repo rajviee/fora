@@ -2,14 +2,14 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const dotenv = require('dotenv');
 
-dotenv.config();
+dotenv.config({ path: '/app/foratask-backend/.env' });
 
-// Models
-const User = require('./models/user');
-const Company = require('./models/company');
-const Subscription = require('./models/subscription');
-const OrganizationSettings = require('./models/organizationSettings');
-const SalaryConfig = require('./models/salaryConfig');
+// Models - correct paths
+const User = require('../models/user');
+const Company = require('../models/company');
+const Subscription = require('../models/subscription');
+const OrganizationSettings = require('../models/organizationSettings');
+const SalaryConfig = require('../models/salaryConfig');
 
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/foratask';
 
@@ -59,7 +59,7 @@ const seedData = async () => {
         await Company.findByIdAndUpdate(company._id, { subscription: subscription._id });
         console.log('✅ Subscription created with 90-day trial');
 
-        // 3. Create Organization Settings
+        // 3. Create Organization Settings with 200m geofence
         const orgSettings = await OrganizationSettings.create({
             company: company._id,
             workingDays: {
@@ -85,7 +85,7 @@ const seedData = async () => {
                     latitude: 23.0225,
                     longitude: 72.5714
                 },
-                geofenceRadius: 300,
+                geofenceRadius: 200, // 200m as per requirement
                 isPrimary: true
             }],
             attendance: {
@@ -103,7 +103,7 @@ const seedData = async () => {
         });
         console.log('✅ Organization settings created');
 
-        // 4. Create Users
+        // 4. Create Users: Rajvi (Owner), Shubh (Supervisor), Tushar (Employee)
         const users = [
             {
                 email: 'rajvi@varientworld.com',
@@ -124,7 +124,7 @@ const seedData = async () => {
                 contactNumber: '+919876543212'
             },
             {
-                email: 'developers1@varientworld.com',
+                email: 'tushar@varientworld.com',
                 password: 'Tushar@123',
                 firstName: 'Tushar',
                 lastName: 'Mehta',
@@ -209,9 +209,9 @@ const seedData = async () => {
         console.log('Company: Varient Worldwide');
         console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
         console.log('Users:');
-        console.log('  • Rajvi (Admin): rajvi@varientworld.com / Rajvi@123');
+        console.log('  • Rajvi (Owner/Admin): rajvi@varientworld.com / Rajvi@123');
         console.log('  • Shubh (Supervisor): shubh@varientworld.com / Shubh@123');
-        console.log('  • Tushar (Employee): developers1@varientworld.com / Tushar@123');
+        console.log('  • Tushar (Employee): tushar@varientworld.com / Tushar@123');
         console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
         await mongoose.disconnect();
