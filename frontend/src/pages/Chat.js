@@ -77,9 +77,11 @@ const Chat = () => {
   const fetchRooms = async () => {
     try {
       const response = await api.get('/chat/rooms');
-      setRooms(response.data || []);
+      const roomsList = response.data?.rooms || response.data || [];
+      setRooms(Array.isArray(roomsList) ? roomsList : []);
     } catch (err) {
       console.error('Failed to fetch rooms:', err);
+      setRooms([]);
     } finally {
       setLoading(false);
     }
