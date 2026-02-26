@@ -284,19 +284,19 @@ class ForataskAPITester:
         """Test statistics endpoints"""
         print("\n📊 Testing Statistics APIs...")
         
-        # Test task summary stats
+        # Test task summary stats with required parameter
         self.run_test(
             "Get task summary stats",
             "GET",
-            "/stats/tasks-summary",
+            "/stats/tasks-summary?isSelfTask=false",
             200
         )
         
-        # Test today's tasks
+        # Test today's tasks with required parameter
         self.run_test(
             "Get today's tasks",
             "GET",
-            "/stats/todaysTasks",
+            "/stats/todaysTasks?isSelfTask=false",
             200
         )
         
