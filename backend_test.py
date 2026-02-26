@@ -102,7 +102,7 @@ class ForataskAPITester:
         """Test employee management endpoints"""
         print("\n📋 Testing Employee Management APIs...")
         
-        # Check if user is admin
+        # Admin users always get 200, non-admin users get 403
         is_admin = self.user.get('role') == 'admin'
         expected_status = 200 if is_admin else 403
         
