@@ -152,10 +152,15 @@ const AddTask = () => {
         }))
       };
 
-      const response = await api.post('/task', taskData);
-      navigate(`/tasks/${response.data._id}`);
+      const response = await api.post('/task/add-task', taskData);
+      const newTaskId = response.data?.task?._id || response.data?._id;
+      if (newTaskId) {
+        navigate(`/tasks/${newTaskId}`);
+      } else {
+        navigate('/tasks');
+      }
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to create task');
+      setError(err.response?.data?.message || err.response?.data?.error || 'Failed to create task');
     } finally {
       setLoading(false);
     }
