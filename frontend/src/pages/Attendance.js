@@ -39,11 +39,22 @@ const Attendance = () => {
         api.get(`/attendance/monthly-stats?month=${format(currentMonth, 'yyyy-MM')}`)
       ]);
 
-      setAttendanceRecords(recordsRes.data || []);
+      // Handle different API response formats
+      const records = recordsRes.data?.records || recordsRes.data || [];
+      setAttendanceRecords(Array.isArray(records) ? records : []);
       setTodayAttendance(todayRes.data);
-      setMonthlyStats(statsRes.data);
+      
+      // Handle monthly stats from API response
+      const stats = statsRes.data || {};
+      setMonthlyStats({
+        workingDays: stats.workingDays || stats.expectedWorkingDays || 0,
+        presentDays: stats.presentDays || stats.present || 0,
+        absentDays: stats.absentDays || stats.absent || 0,
+        leavesTaken: stats.leavesTaken || stats.onLeave || 0
+      });
     } catch (err) {
       console.error('Failed to fetch attendance:', err);
+      setAttendanceRecords([]);
     } finally {
       setLoading(false);
     }
