@@ -31,18 +31,24 @@ const Tasks = () => {
   const fetchTasks = async () => {
     try {
       setLoading(true);
-      let endpoint = '/task';
+      let endpoint = '/task/getTaskList';
       
+      // Add filter params based on active tab
+      const params = new URLSearchParams();
       if (activeTab === 'assigned') {
-        endpoint = '/task?filter=assigned';
+        params.append('filter', 'assigned');
       } else if (activeTab === 'created') {
-        endpoint = '/task?filter=created';
+        params.append('filter', 'created');
       } else if (activeTab === 'viewer') {
-        endpoint = '/task?filter=viewer';
+        params.append('filter', 'viewer');
       }
 
-      const response = await api.get(endpoint);
-      setTasks(response.data || []);
+      const queryString = params.toString();
+      const response = await api.get(queryString ? `${endpoint}?${queryString}` : endpoint);
+      
+      // Handle different response formats
+      const taskList = response.data?.tasks || response.data || [];
+      setTasks(Array.isArray(taskList) ? taskList : []);
     } catch (err) {
       console.error('Failed to fetch tasks:', err);
       setTasks([]);
