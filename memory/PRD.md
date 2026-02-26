@@ -1,86 +1,149 @@
-# ForaTask PRD - Product Requirements Document
+# ForaTask Enhancement - Product Requirements Document
+
+## Project Overview
+ForaTask is a comprehensive task and workforce management system with a Node.js backend and React Native mobile app. This enhancement adds a web frontend for administration and extends existing features.
 
 ## Original Problem Statement
-Multi-tenant SaaS task management application called **ForaTask**.
+Enhance Foratask by extending the existing architecture with:
+1. Chat (same organization only) - Real-time via existing WebSocket
+2. Attendance - Geotag-based check-in/out with 200m geofence
+3. Tasks - Multi-location support, remote task flag, status updates
+4. Timeline & Discussion - Chronological activity, comments with tagging
+5. Viewer Approval - Per-location and full task approval
+6. Admin Employee Page - Tasks, attendance, salary breakdown
+7. Salary Module - Admin-defined components, attendance-based calculation
 
-## UI Requirements
-- Light theme
-- Primary: #1360C6, Secondary: #103362
-- 75% and 50% opacity variants of #1360C6
-- Clean, modern, minimal interface
-- Fully responsive: desktop, tablet, Android, iOS
+## User Personas
 
-## Architecture
-```
-/app/
-├── backend/              # FastAPI reverse proxy (port 8001 → Node.js 3333)
-│   └── server.py
-├── frontend/             # React web app (port 3000)
-│   └── src/
-│       ├── pages/        # Login, Register, Dashboard, TaskList, TaskCreate,
-│       │                 # TaskDetail, Chat, Attendance, Employees,
-│       │                 # EmployeeProfile, Reports, Settings
-│       ├── components/   # Layout (sidebar + topbar)
-│       ├── AuthContext.js
-│       ├── api.js
-│       └── utils.js
-├── foratask-backend/     # Node.js/Express (port 3333 via nodemon)
-├── foratask-admin/       # Vite React admin panel
-├── foratask-marketing/   # Next.js marketing site
-└── memory/
-```
+### Admin (Rajvi)
+- Full access to all features
+- Can manage employees, salary, organization settings
+- Can create/assign/approve tasks
+- Views all employee analytics
 
-## Credentials
+### Supervisor (Shubh)
+- Can create and assign tasks to subordinates
+- Can view assigned employees' attendance and tasks
+- Limited admin capabilities
+
+### Employee (Tushar)
+- Can view assigned tasks and update status
+- Can mark attendance (check-in/out)
+- Can participate in chat
+- Can add comments/discussions on tasks
+
+## Core Requirements (Completed)
+
+### Authentication
+- [x] JWT-based authentication
+- [x] Role-based access control (Admin, Supervisor, Employee)
+- [x] Seed data with 3 users
+
+### Tasks Module
+- [x] Task creation with multi-location support
+- [x] Remote task toggle (auto if org default)
+- [x] Add/remove location controls
+- [x] Task status management (Pending, In Progress, Completed, For Approval)
+- [x] Doer and Viewer assignment
+- [x] Task filtering (All, Assigned, Created, Viewing)
+
+### Attendance Module
+- [x] Check-in with geotag
+- [x] Check-out (EOTD) with geotag
+- [x] Monthly calendar view
+- [x] Working days configuration
+- [x] 200m office geofence support
+
+### Chat Module
+- [x] Direct messaging
+- [x] Group chat support
+- [x] Real-time via WebSocket
+- [x] File attachments support
+
+### Admin Features
+- [x] Employee list with stats
+- [x] Employee detail with attendance/tasks/salary tabs
+- [x] Organization settings management
+- [x] Working days configuration
+- [x] Office locations with geofence radius
+
+### Salary Module
+- [x] Basic salary configuration
+- [x] Salary components (earnings/deductions)
+- [x] Standard deductions (PF, Professional Tax)
+- [x] Attendance-based calculation
+
+## What's Been Implemented (Feb 26, 2026)
+
+### Backend Enhancements
+- Added admin employee analytics endpoints (/admin/employee/:id/attendance, tasks, salary)
+- Added monthly-stats endpoint for attendance
+- Updated seed data script for Varient Worldwide
+
+### Frontend (New React App)
+- Complete web application at /app/frontend
+- All pages: Dashboard, Tasks, AddTask, TaskDetail, Attendance, Chat, Employees, EmployeeDetail, Salary, Settings
+- Responsive layout with sidebar navigation
+- Light theme with primary color #1360C6
+
+## Technical Architecture
+
+### Backend
+- Node.js + Express
+- MongoDB with Mongoose
+- Socket.io for real-time
+- JWT authentication
+- Port: 3333 (proxied via FastAPI at 8001)
+
+### Frontend
+- React 18
+- React Router v6
+- Axios for API calls
+- Socket.io-client for real-time
+- Recharts for charts
+- Lucide React for icons
+- Port: 3000
+
+### Database Collections
+- users, companies, subscriptions
+- tasks, taskLocations, taskTimeline, taskDiscussions
+- attendance, organizationSettings
+- chatRooms, chatMessages
+- salaryConfig, salaryRecord
+
+## Seed Data
+- Company: Varient Worldwide
 - Admin: rajvi@varientworld.com / Rajvi@123
 - Supervisor: shubh@varientworld.com / Shubh@123
-- Employee: developers1@varientworld.com / Tushar@123
-- Master Admin: admin@foratask.com / Varient23@123
+- Employee: tushar@varientworld.com / Tushar@123
 
-## Implemented Features
+## Backlog / Future Enhancements
 
-### Phase 1 (Previous Agent)
-- SaaS model with Razorpay, subscriptions, access control
-- Recurring tasks with completion history
-- Master Admin panel, Marketing website
-- All Node.js backend controllers & models
-
-### Phase 2 (Feb 25, 2026 - Session 1)
-- FastAPI proxy, React web frontend, seed data
-- Auth (login/register), Dashboard, Tasks CRUD
-- Chat, Attendance, Team management
-- Multi-location task creation (increment/decrement, max 7)
-
-### Phase 3 (Feb 25, 2026 - Session 2: UI Overhaul)
-- Dashboard: stats cards, Today's Task table, Task Summary donut, Statistics line chart, Calendar widget, Recent Activity, Notes, Priority Queue, Task Overview table
-- Sidebar: Dashboard, Task, Discussion, Reports, Employees, Settings
-- Top bar: search, notification bell, user avatar
-- Employees page: blue header table (Name, Designation, Email, Contact, Type)
-- Employee Profile page: Overview/Attendance/Salary tabs, monthly trends chart, working days bar, daily attendance log with geotag
-- Task list: blue header table with doer avatars
-- Task detail: Details/Locations/Discussion tabs, doer/viewer chips
-- Reports page: pie + bar charts
-- Settings page: profile, org settings
-- Full mobile responsiveness (390px+)
-
-## Pending / Backlog
+### P0 - Critical
+- [ ] Timeline endpoint implementation for task detail
+- [ ] Discussion endpoint implementation with @mentions
 
 ### P1 - High Priority
-- Salary & Leave module (backend logic + frontend)
-- Admin-Employee analytics dashboard
-- Task edit functionality
-- Viewer approval flow for tasks/locations
+- [ ] Holiday calendar management
+- [ ] Leave request workflow
+- [ ] Task documents upload
+- [ ] Push notifications
 
 ### P2 - Medium Priority
-- Group chat creation UI + file sharing
-- Location geotag for progress updates
-- Attendance admin settings UI
-- Task recurring schedule management
+- [ ] Bulk task assignment
+- [ ] Attendance reports export
+- [ ] Salary slip generation
+- [ ] Employee performance metrics
 
-### P3 - Low Priority
-- Master Admin panel integration
-- Marketing website integration
-- Mobile React Native app connectivity
-- Push notifications, reporting exports
+### P3 - Nice to Have
+- [ ] Dark mode toggle
+- [ ] Custom dashboard widgets
+- [ ] Integration with calendar apps
+- [ ] Mobile-responsive optimizations
 
----
-*Last Updated: February 25, 2026*
+## Next Action Items
+1. Implement task timeline and discussion API endpoints
+2. Add @mention functionality in discussions
+3. Test with React Native mobile app compatibility
+4. Add comprehensive error handling
+5. Implement leave management workflow
