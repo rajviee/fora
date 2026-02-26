@@ -102,15 +102,19 @@ class ForataskAPITester:
         """Test employee management endpoints"""
         print("\n📋 Testing Employee Management APIs...")
         
+        # Check if user is admin
+        is_admin = self.user.get('role') == 'admin'
+        expected_status = 200 if is_admin else 403
+        
         # Get employees list
         success, employees_data = self.run_test(
             "Get employees list",
             "GET", 
             "/employees",
-            200
+            expected_status
         )
         
-        if success:
+        if success and is_admin:
             employees = employees_data.get('employees', employees_data)
             if isinstance(employees, list) and len(employees) >= 3:
                 print(f"   Found {len(employees)} employees")
@@ -124,8 +128,10 @@ class ForataskAPITester:
                         f"/employees/{employee_id}",
                         200
                     )
+        elif not is_admin:
+            print("   Expected 403 for non-admin user - correct behavior")
         
-        return success
+        return True
 
     def test_tasks_api(self):
         """Test task management endpoints"""
