@@ -88,9 +88,11 @@ const Chat = () => {
   const fetchEmployees = async () => {
     try {
       const response = await api.get('/employees');
-      setEmployees(response.data || []);
+      const employeeList = response.data?.employees || response.data || [];
+      setEmployees(Array.isArray(employeeList) ? employeeList : []);
     } catch (err) {
       console.error('Failed to fetch employees:', err);
+      setEmployees([]);
     }
   };
 
