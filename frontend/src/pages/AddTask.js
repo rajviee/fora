@@ -43,9 +43,12 @@ const AddTask = () => {
   const fetchEmployees = async () => {
     try {
       const response = await api.get('/employees');
-      setEmployees(response.data || []);
+      // Handle different API response formats
+      const employeeList = response.data?.employees || response.data || [];
+      setEmployees(Array.isArray(employeeList) ? employeeList : []);
     } catch (err) {
       console.error('Failed to fetch employees:', err);
+      setEmployees([]);
     }
   };
 
