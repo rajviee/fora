@@ -39,12 +39,14 @@ const TaskDetail = () => {
     try {
       const [taskRes, timelineRes, discussionsRes] = await Promise.all([
         api.get(`/task/${id}`),
-        api.get(`/task/${id}/timeline`),
-        api.get(`/task/${id}/discussions`)
+        api.get(`/task/${id}/timeline`).catch(() => ({ data: [] })),
+        api.get(`/task/${id}/discussions`).catch(() => ({ data: [] }))
       ]);
-      setTask(taskRes.data);
-      setTimeline(timelineRes.data || []);
-      setDiscussions(discussionsRes.data || []);
+      setTask(taskRes.data?.task || taskRes.data);
+      const timelineData = timelineRes.data?.timeline || timelineRes.data || [];
+      const discussionsData = discussionsRes.data?.discussions || discussionsRes.data || [];
+      setTimeline(Array.isArray(timelineData) ? timelineData : []);
+      setDiscussions(Array.isArray(discussionsData) ? discussionsData : []);
     } catch (err) {
       console.error('Failed to fetch task:', err);
     } finally {
